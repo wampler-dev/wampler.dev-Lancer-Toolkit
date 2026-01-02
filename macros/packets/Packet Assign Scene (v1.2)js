@@ -1,0 +1,219 @@
+/***** OSR_LIB *****/
+const OSR_LIB = (() => {
+  const INVIS = "\u200B\u200C\u200D\u2060\uFE0F\uFEFF";
+  function stripStatusIconPrefix(name) {
+    let s = String(name ?? "");
+    const junk = `[\\s${INVIS}]*`;
+    const icon = `(?:⏳|✅|▶)`;
+    const vs16 = `(?:\\uFE0F)?`;
+    const re = new RegExp(`^${icon}${vs16}${junk}`, "u");
+    while (re.test(s)) s = s.replace(re, "");
+    s = s.replace(new RegExp(`^${junk}`, "u"), "");
+    return s;
+  }
+  function isPacket(clean){ return /\b(B|C)\d+\b/.test(clean); }
+  function esc(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+  }
+  return { stripStatusIconPrefix, isPacket, esc };
+})();
+/***** /OSR_LIB *****/
+
+// ✅ Use a valid, active package scope
+const FLAG_SCOPE = "lancer";
+const FLAG_SCENE_ID = "packetSceneId"; // flags.lancer.packetSceneId
+
+function detectPacketJournal() {
+  const cur = game.journal.contents.find(j => j.getFlag("lancer","currentPacket") === true);
+  if (cur) return cur;
+
+  const wins = Object.values(ui.windows ?? {});
+  const journalWins = wins.filter(w => w?.object?.documentName === "JournalEntry" || w?.object instanceof JournalEntry);
+  if (!journalWins.length) return null;
+
+  journalWins.sort((a,b) => (a.position?.z ?? 0) - (b.position?.z ?? 0));
+  const top = journalWins[journalWins.length - 1];
+  return top?.object ?? null;
+}
+
+function getTopmostJournalSheetFor(entry) {
+  const wins = Object.values(ui.windows ?? {});
+  const sheets = wins.filter(w =>
+    w?.object?.documentName === "JournalEntry" &&
+    w?.object?.id === entry.id
+  );
+  if (!sheets.length) return null;
+  sheets.sort((a,b) => (a.position?.z ?? 0) - (b.position?.z ?? 0));
+  return sheets[sheets.length - 1];
+}
+
+function inferViewedPageId(sheet) {
+  try {
+    const el = sheet?.element?.[0];
+    if (!el) return null;
+
+    const activeTab = el.querySelector("[data-page-id].active, [data-page-id][aria-selected='true']");
+    if (activeTab?.dataset?.pageId) return activeTab.dataset.pageId;
+
+    const activePage = el.querySelector(".journal-entry-page.active[data-page-id], .journal-page-content.active[data-page-id]");
+    if (activePage?.dataset?.pageId) return activePage.dataset.pageId;
+
+    const any = el.querySelector("[data-page-id]");
+    return any?.dataset?.pageId ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function getOrCreateFirstTextPage(journal, pageName="Packet") {
+  const existing = journal.pages?.contents?.find(p => p.type === "text");
+  if (existing) return existing;
+  const [p] = await journal.createEmbeddedDocuments("JournalEntryPage", [{
+    name: pageName, type: "text", text: { content: "" }
+  }]);
+  return p;
+}
+
+function upsertSceneBlock(html, scene) {
+  const block = `
+<section data-osr-scene-block="1">
+  <hr>
+  <h2>Scene</h2>
+  <p>@UUID[Scene.${scene.id}]{${OSR_LIB.esc(scene.name)}}</p>
+</section>
+`.trim();
+
+  let out = String(html ?? "").trim();
+  const re = /<section[^>]*data-osr-scene-block\s*=\s*["']1["'][^>]*>[\s\S]*?<\/section>/i;
+
+  if (re.test(out)) return out.replace(re, block);
+  return out ? `${out}\n\n${block}` : block;
+}
+
+async function promptAssign(packet, scenes) {
+  const options = scenes
+    .map(s => `<option value="${s.id}">${OSR_LIB.esc(s.name)}</option>`)
+    .join("");
+
+  const existingSceneId = packet.getFlag(FLAG_SCOPE, FLAG_SCENE_ID);
+
+  return new Promise(resolve => {
+    new Dialog({
+      title: "Packet → Assign Scene (v1.2)",
+      content: `
+      <form>
+        <p><strong>Packet:</strong> ${OSR_LIB.esc(packet.name)}</p>
+        <p class="notes"><em>Existing binding:</em> ${existingSceneId ? `Scene.${existingSceneId}` : "None"}</p>
+
+        <div class="form-group">
+          <label>Scene</label>
+          <select name="sceneId">${options}</select>
+        </div>
+
+        <hr>
+        <div class="form-group">
+          <label><input type="checkbox" name="writeBlock" checked/>
+          Write/Update Scene block in the viewed packet page (fallback: first text page)</label>
+        </div>
+
+        <div class="form-group">
+          <label><input type="checkbox" name="openScene" checked/>
+          Open Scene after assigning</label>
+        </div>
+
+        <div class="form-group">
+          <label><input type="checkbox" name="activateScene"/>
+          Activate Scene (make it the viewed scene)</label>
+        </div>
+
+        <p class="notes">Saves: <code>flags.${FLAG_SCOPE}.${FLAG_SCENE_ID}</code></p>
+      </form>
+      `,
+      buttons: {
+        ok: {
+          icon: '<i class="fas fa-link"></i>',
+          label: "Assign",
+          callback: html => {
+            const f = html[0].querySelector("form");
+            resolve({
+              sceneId: f.sceneId.value,
+              writeBlock: !!f.writeBlock.checked,
+              openScene: !!f.openScene.checked,
+              activateScene: !!f.activateScene.checked
+            });
+          }
+        },
+        clear: {
+          icon: '<i class="fas fa-unlink"></i>',
+          label: "Clear Binding",
+          callback: () => resolve({ clear: true })
+        },
+        cancel: { label: "Cancel", callback: () => resolve(null) }
+      },
+      default: "ok"
+    }).render(true);
+  });
+}
+
+// ---------------- MAIN ----------------
+try {
+  const packet = detectPacketJournal();
+  if (!packet) {
+    ui.notifications.warn("Assign Scene: No packet detected. Open a packet journal or set a Current Packet.");
+    return;
+  }
+
+  const clean = OSR_LIB.stripStatusIconPrefix(packet.name);
+  if (!OSR_LIB.isPacket(clean)) {
+    ui.notifications.warn(`Assign Scene: Detected journal is not a packet: "${packet.name}"`);
+    return;
+  }
+
+  const scenes = game.scenes.contents.slice().sort((a,b)=>a.name.localeCompare(b.name));
+  if (!scenes.length) {
+    ui.notifications.warn("Assign Scene: No scenes exist in this world yet.");
+    return;
+  }
+
+  const cfg = await promptAssign(packet, scenes);
+  if (!cfg) return;
+
+  if (cfg.clear) {
+    await packet.unsetFlag(FLAG_SCOPE, FLAG_SCENE_ID);
+    ui.notifications.info("Cleared packet scene binding.");
+    return;
+  }
+
+  const scene = game.scenes.get(cfg.sceneId);
+  if (!scene) {
+    ui.notifications.warn("Assign Scene: Scene not found.");
+    return;
+  }
+
+  // Save binding
+  await packet.setFlag(FLAG_SCOPE, FLAG_SCENE_ID, scene.id);
+
+  // Write block
+  let wroteTo = "(no page write)";
+  if (cfg.writeBlock) {
+    const sheet = getTopmostJournalSheetFor(packet);
+    const viewedPageId = inferViewedPageId(sheet);
+
+    let page = null;
+    if (viewedPageId) page = packet.pages?.get(viewedPageId) ?? null;
+    if (!page || page.type !== "text") page = await getOrCreateFirstTextPage(packet, "Packet");
+
+    const html = upsertSceneBlock(page.text?.content ?? "", scene);
+    await page.update({ "text.content": html });
+    wroteTo = `Page: ${page.name}`;
+  }
+
+  if (cfg.openScene) scene.sheet.render(true);
+  if (cfg.activateScene) await scene.view();
+
+  ui.notifications.info(`Assigned Scene → ${scene.name} | ${wroteTo}`);
+} catch (err) {
+  console.error(err);
+  ui.notifications.error(`Assign Scene error: ${err?.message ?? err}`);
+}
