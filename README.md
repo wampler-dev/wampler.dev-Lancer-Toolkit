@@ -38,6 +38,7 @@ flags.lancer.currentPacket     boolean
 flags.lancer.packetSceneId     Scene UUID
 flags.lancer.packetActorFolderId Actor Folder ID
 
+
 These flags are treated as the single source of truth.
 Name prefixes, dashboards, and reports are derived from flags — never the reverse.
 
