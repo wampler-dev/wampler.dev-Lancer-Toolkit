@@ -1,0 +1,68 @@
+name: Docs Change
+description: Propose a documentation change (authority-aware, one-axis).
+title: "Docs: <file or topic> — <short description>"
+labels: ["docs"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Documentation is governed by `docs/authority.md` (Tier 0). Conventions live in `docs/conventions.md`.
+        Files without compliant headers are considered non-authoritative drafts.
+
+  - type: checkboxes
+    id: one-axis
+    attributes:
+      label: One Axis of Work (Required)
+      options:
+        - label: This issue is Docs-only (no macro/implementation changes required)
+          required: true
+
+  - type: input
+    id: target
+    attributes:
+      label: Target Document(s)
+      description: List the file(s) to change.
+      placeholder: "docs/workflow.md"
+    validations:
+      required: true
+
+  - type: textarea
+    id: change
+    attributes:
+      label: Proposed Change
+      description: Describe the change and why it is needed.
+      placeholder: "What should be added/removed/clarified?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: authority
+    attributes:
+      label: Governing Authority (Required)
+      description: Cite the authority tier(s) and sources that govern this doc change.
+      placeholder: |
+        Tier: 0
+        Sources:
+        - docs/authority.md
+        - docs/conventions.md
+        - (other: ...)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: headers
+    attributes:
+      label: Header & License Declaration (Required)
+      options:
+        - label: I will ensure all modified docs include a compliant header
+          required: true
+        - label: I will ensure all modified docs declare `LICENSE: MIT — see LICENSE file`
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes (Optional)
+      placeholder: "Any extra context."
+    validations:
+      required: false
