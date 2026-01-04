@@ -1,0 +1,37 @@
+# wampler.dev Lancer Toolkit — Commit Message Template
+#
+# Rules:
+# - One axis of change per commit
+# - Cite governing authority where applicable
+# - Macro changes MUST reference docs/macro-audit.md
+#
+# Types:
+#   docs | macro | workflow | chore | fix
+#
+# Scopes:
+#   Use a specific file, macro name, or subsystem
+#   Examples: authority, conventions, packet-dashboard
+#
+# ----------------------------------------------------
+
+<type>(<scope>): <short, imperative summary>
+
+Refs:
+- <authority reference, e.g. docs/authority.md (Tier 0)>
+- <macro-audit entry date, if applicable>
+
+# ----------------------------------------------------
+# Examples:
+#
+# docs(conventions): scope OSR prefix to Operation Solstice Rain
+#
+# Refs:
+# - docs/authority.md (Tier 0)
+#
+# macro(packet-dashboard): validate packetStatus enum before activation
+#
+# Refs:
+# - docs/authority.md (Tier 0)
+# - docs/macro-audit.md entry 2026-01-04
+#
+# ----------------------------------------------------
