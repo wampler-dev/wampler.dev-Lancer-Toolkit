@@ -1,0 +1,98 @@
+name: Macro Change
+description: Request a change to an existing macro or propose a new macro (with required authority + audit constraints).
+title: "Macro: <Macro Name> — <short description>"
+labels: ["macro"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repository is governed by `docs/authority.md` (Tier 0) and `docs/conventions.md`.
+        Macro changes must be logged in `docs/macro-audit.md`.
+
+  - type: checkboxes
+    id: one-axis
+    attributes:
+      label: One Axis of Work (Required)
+      description: Issues must cover exactly one axis. If multiple axes are needed, open separate issues.
+      options:
+        - label: This issue is Macro-only (no docs/workflow changes required)
+          required: true
+
+  - type: input
+    id: macro-name
+    attributes:
+      label: Macro Name
+      description: Exact macro name as it appears in Foundry or the repo.
+      placeholder: "Packet Dashboard — Build/Refresh (v8.2)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: purpose
+    attributes:
+      label: Purpose / Problem
+      description: What problem does this macro change solve?
+      placeholder: "Describe the current behavior and why it needs to change."
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired-behavior
+    attributes:
+      label: Desired Behavior
+      description: Describe the intended behavior in clear, testable terms.
+      placeholder: "Given X, when Y, then Z..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: authority
+    attributes:
+      label: Governing Authority (Required)
+      description: Cite the authority tier(s) and specific sources that govern this change.
+      placeholder: |
+        Tier: 0
+        Sources:
+        - docs/authority.md
+        - docs/conventions.md
+        - (other: ...)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints (Required)
+      options:
+        - label: Extensions remain namespaced under `flags.lancer.*`
+          required: true
+        - label: Authoritative packet state uses `flags.lancer.packetStatus`, `flags.lancer.currentPacket`, `flags.lancer.packetSceneId`, `flags.lancer.packetActorFolderId`
+          required: true
+        - label: Non-destructive behavior (no unintended document deletion or irreversible mutation)
+          required: true
+
+  - type: textarea
+    id: test-plan
+    attributes:
+      label: Test Plan (Required)
+      description: How will we verify the change works in Foundry v12?
+      placeholder: "Steps to reproduce + expected results."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: audit
+    attributes:
+      label: Audit Requirements
+      description: This is enforced by `docs/authority.md` contribution authority.
+      options:
+        - label: I understand macro changes must include an entry in `docs/macro-audit.md`
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes (Optional)
+      placeholder: "Any extra context, screenshots, links, or constraints."
+    validations:
+      required: false
