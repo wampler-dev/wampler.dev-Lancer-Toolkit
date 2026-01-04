@@ -1,0 +1,85 @@
+name: Bug Report
+description: Report a defect in macros, docs, or repository structure (one-axis).
+title: "Bug: <short description>"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repo is governed by `docs/authority.md` and `docs/conventions.md`.
+        Please keep issues single-axis. If multiple issues exist, open multiple bug reports.
+
+  - type: dropdown
+    id: axis
+    attributes:
+      label: Affected Axis (Required)
+      options:
+        - Macro
+        - Docs
+        - Workflow
+        - Repo / Chore
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior.
+      placeholder: "Observed: ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: "Expected: ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include versions and relevant context.
+      placeholder: |
+        Foundry VTT: v12.x
+        Lancer system: x.y.z
+        Browser/OS:
+        Modules involved:
+    validations:
+      required: true
+
+  - type: textarea
+    id: authority
+    attributes:
+      label: Governing Authority (Best Effort)
+      description: If you know what governs the intended behavior, cite it.
+      placeholder: |
+        Tier: (unknown)
+        Possible sources:
+        - docs/authority.md
+        - docs/conventions.md
+        - (other: ...)
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Screenshots (Optional)
+      placeholder: "Paste console errors or attach screenshots."
+    validations:
+      required: false
