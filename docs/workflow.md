@@ -1,4 +1,4 @@
-Authority Tiers Used: Tier 0–4 (Tier 5 not used)
+Authority Tiers Used: Tier 0
 
 # Gameplay Workflow
 
