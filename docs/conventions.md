@@ -36,6 +36,65 @@ If any ambiguity arises, consult `docs/authority.md` and resolve conflicts using
 
 ---
 
+## Authority Tier Declaration
+
+All non-trivial planning, analysis, design, or prioritization artifacts MUST explicitly declare the highest authority tier relied upon in their reasoning.
+
+This requirement exists to:
+- Prevent implicit escalation to informal or unverifiable authority
+- Preserve reviewability and audit clarity
+- Enforce lowest-necessary authority usage
+
+### Applicability
+
+This rule applies to, but is not limited to:
+- Workflow analyses and rankings
+- Design rationales
+- Planning documents
+- Macro behavior justifications
+- Documentation influencing implementation order or system behavior
+
+### Declaration Format
+
+An authority declaration MUST appear near the top of the document or section and MUST use the following format:
+
+~~~text
+Authority Tiers Used: Tier X–Y
+~~~
+
+Examples:
+
+~~~text
+Authority Tiers Used: Tier 0–3
+~~~
+
+~~~text
+Authority Tiers Used: Tier 0–4 (Tier 5 not used)
+~~~
+
+### Tier 5 Usage Requirements
+
+If Tier 5 authority (informal, experiential, or non-reproducible sources) is used:
+
+1. Tier 5 usage MUST be explicitly declared.
+2. The specific Tier 5 source or rationale MUST be named.
+3. The justification MUST explain why lower tiers were insufficient.
+
+Example:
+
+~~~text
+Authority Tiers Used: Tier 0–5
+Tier 5 Source: Informal GM pacing heuristics derived from live Lancer play
+~~~
+
+### Enforcement
+
+- Content lacking an authority tier declaration is considered non-authoritative draft material.
+- Repository governance (Tier 0) always applies implicitly and does not require re-declaration.
+- Reviewers MAY reject or request revision of content that escalates authority without justification.
+
+---
+
 ## Mission Naming (General Rule)
 
 Mission naming MUST be explicit about the campaign or module it belongs to.
@@ -141,7 +200,7 @@ Headers exist to prevent design drift and to ensure contributors (human or autom
 ### Documentation Headers (`.md`)
 Place this HTML comment header at the top of every documentation file:
 
-```text
+~~~text
 <!--
 PROJECT: wampler.dev Lancer Toolkit
 FILE: <path/filename>
@@ -162,4 +221,5 @@ SCOPE NOTES:
 - Out of scope: <explicit>
 
 LAST REVIEWED: YYYY-MM-DD
---
+
+---
