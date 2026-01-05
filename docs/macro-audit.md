@@ -1,3 +1,5 @@
+Authority Tiers Used: Tier 0–4 (Tier 5 not used)
+
 # Macro Audit Log (OSR Toolkit)
 
 This file is the persistent, audit-friendly suggestion and status log for each macro in the repo.

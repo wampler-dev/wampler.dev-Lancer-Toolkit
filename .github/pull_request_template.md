@@ -20,6 +20,8 @@ SCOPE NOTES:
 LAST REVIEWED: 2026-01-04
 -->
 
+Authority Tiers Used: Tier 0–4 (Tier 5 not used)
+
 # Summary
 Describe what this PR changes and why.
 

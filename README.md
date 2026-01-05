@@ -1,3 +1,5 @@
+Authority Tiers Used: Tier 0–4 (Tier 5 not used)
+
 # OSR Foundry / Lancer Toolkit
 
 A packet-based mission control toolkit for **Foundry VTT (v12+)** using the **Lancer RPG system**.

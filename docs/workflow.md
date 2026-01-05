@@ -1,3 +1,5 @@
+Authority Tiers Used: Tier 0–4 (Tier 5 not used)
+
 # Gameplay Workflow
 
 This document describes the expected GM loop during play when using OSR packet-based missions.

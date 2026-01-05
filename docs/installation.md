@@ -1,3 +1,5 @@
+Authority Tiers Used: Tier 0–4 (Tier 5 not used)
+
 # Installation & Initial Setup
 
 Follow this document to set up a packet-based Lancer mission using the OSR toolkit.
