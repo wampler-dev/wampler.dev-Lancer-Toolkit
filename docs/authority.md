@@ -20,7 +20,7 @@ SCOPE NOTES:
 LAST REVIEWED: 2026-01-04
 -->
 
-Authority Tiers Used: Tier 0–4 (Tier 5 not used)
+Authority Tiers Used: Tier 0
 
 # Authority & Source Hierarchy
 **Lancer Foundry Toolkit — Canonical Reference Order**

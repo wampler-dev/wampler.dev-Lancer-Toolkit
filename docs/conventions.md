@@ -59,17 +59,17 @@ This rule applies to, but is not limited to:
 An authority declaration MUST appear near the top of the document or section and MUST use the following format:
 
 ~~~text
-Authority Tiers Used: Tier X–Y
+Example Authority Tiers: Tier X–Y
 ~~~
 
 Examples:
 
 ~~~text
-Authority Tiers Used: Tier 0–3
+Example Authority Tiers: Tier 0–3
 ~~~
 
 ~~~text
-Authority Tiers Used: Tier 0–4 (Tier 5 not used)
+Example Authority Tiers: Tier 0–4 (Tier 5 not used)
 ~~~
 
 ### Tier 5 Usage Requirements
@@ -83,7 +83,7 @@ If Tier 5 authority (informal, experiential, or non-reproducible sources) is use
 Example:
 
 ~~~text
-Authority Tiers Used: Tier 0–5
+Example Authority Tiers: Tier 0–5
 Tier 5 Source: Informal GM pacing heuristics derived from live Lancer play
 ~~~
 
